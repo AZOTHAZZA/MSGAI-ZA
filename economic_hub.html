@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSGAI-Z - 経済監査プロトコル</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-func {
+            @apply p-6 text-xl font-bold rounded-xl shadow-lg transition duration-300 transform hover:scale-105 w-full;
+        }
+        .btn-nav {
+            @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    
+    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-green-400">
+            💰 経済監査プロトコル
+        </h1>
+        <div class="space-x-4">
+            <a href="logos_console.html" class="btn-nav bg-blue-600">
+                💬 AIコンソールへ
+            </a>
+            <a href="index.html" class="btn-nav bg-indigo-600">
+                🏠 トップへ戻る
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-4xl mx-auto space-y-8">
+        <p class="text-gray-400 text-lg">
+            MSGAI-Zシステムの経済状態を監視し、ロゴス監査に基づき強制作為を実行します。
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            
+            <a href="state_view.html" class="btn-func bg-gray-700 hover:bg-gray-600 border border-green-500">
+                <span class="block text-4xl mb-2">📊</span>
+                システム状態ビュー
+                <p class="text-base font-normal mt-1 opacity-75">Vibrationレベル、残高、レートの確認</p>
+            </a>
+
+            <a href="audit_acts.html" class="btn-func bg-gray-700 hover:bg-gray-600 border border-red-500">
+                <span class="block text-4xl mb-2">⚙️</span>
+                強制作為実行
+                <p class="text-base font-normal mt-1 opacity-75">送金、通貨生成、交換の操作</p>
+            </a>
+            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSGAI-Z - 強制作為実行</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .form-input {
+            @apply p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-indigo-500 w-full;
+        }
+        .form-section {
+            @apply bg-gray-800 p-6 rounded-xl shadow-lg border-t-4;
+        }
+        .btn-nav {
+            @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    
+    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-red-400">
+            ⚙️ 強制作為実行フォーム
+        </h1>
+        <div class="space-x-4">
+            <a href="economic_hub.html" class="btn-nav bg-green-700">
+                💰 経済ハブへ
+            </a>
+            <a href="logos_console.html" class="btn-nav bg-blue-600">
+                💬 AIコンソールへ
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-4xl mx-auto space-y-8">
+
+        <div class="form-section border-red-500">
+            <h2 class="text-2xl font-bold mb-4 text-red-400">システム制御作為</h2>
+            <div class="space-y-4">
+                <p class="text-sm text-gray-400">
+                    ロゴス・コアの状態を直接操作します。これらの作為はVibrationレベルに大きく影響します。
+                </p>
+                <div class="flex space-x-4">
+                    <button onclick="actForcedHalt()" 
+                            class="flex-1 p-3 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition duration-150">
+                        🛑 作為実行: 強制停止 (HALT)
+                    </button>
+                    <button onclick="actRestart()" 
+                            class="flex-1 p-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition duration-150">
+                        ✅ 作為実行: 再起動 (RESTART)
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section border-gray-500">
+            <h2 class="text-2xl font-bold mb-4 text-gray-400">アカウント作成作為</h2>
+            <div class="space-y-4">
+                <input type="text" id="new_account_id" placeholder="新しいアカウントID (例: USER_C)" class="form-input" required>
+                <input type="text" id="new_account_name" placeholder="アカウント名 (任意)" class="form-input">
+                <button onclick="handleCreateAccountAct()" 
+                        class="w-full p-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold transition duration-150">
+                    作為実行: アカウント作成
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section border-yellow-500">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">通貨送金作為 (Transfer)</h2>
+            <div class="space-y-4">
+                <select id="transfer_sender" class="form-input" required>
+                    <option value="" disabled selected>送金元アカウントIDを選択</option>
+                    </select>
+                <select id="transfer_recipient" class="form-input" required>
+                    <option value="" disabled selected>送金先アカウントIDを選択</option>
+                    </select>
+                <div class="flex space-x-2">
+                    <input type="number" step="0.01" id="transfer_amount" placeholder="送金金額" class="form-input flex-1" required>
+                    <select id="transfer_currency" class="form-input w-24" required>
+                        </select>
+                </div>
+                <button onclick="actTransfer()" 
+                        class="w-full p-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold transition duration-150">
+                    作為実行: 送金
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section border-green-500">
+            <h2 class="text-2xl font-bold mb-4 text-green-400">通貨生成作為 (Mint)</h2>
+            <div class="space-y-4">
+                <p class="text-sm text-gray-400">
+                    システム内に新たな通貨を供給します。Vibrationを大きく増加させる作為です。
+                </p>
+                <select id="mint_recipient" class="form-input" required>
+                    <option value="" disabled selected>生成先アカウントIDを選択</option>
+                </select>
+                <div class="flex space-x-2">
+                    <input type="number" step="0.01" id="mint_amount" placeholder="生成量" class="form-input flex-1" required>
+                    <select id="mint_currency" class="form-input w-24" required>
+                        </select>
+                </div>
+                <button onclick="actMintCurrency()" 
+                        class="w-full p-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold transition duration-150">
+                    作為実行: 生成
+                </button>
+            </div>
+        </div>
+
+        <div class="form-section border-blue-500">
+            <h2 class="text-2xl font-bold mb-4 text-blue-400">通貨交換作為 (Exchange)</h2>
+            <div class="space-y-4">
+                <select id="exchange_account_id" class="form-input" required>
+                    <option value="" disabled selected>交換元アカウントIDを選択</option>
+                </select>
+                <input type="number" step="0.01" id="exchange_amount" placeholder="交換量" class="form-input" required>
+                <div class="flex space-x-2">
+                    <select id="exchange_from_currency" class="form-input flex-1" required>
+                        </select>
+                    <span class="p-3 text-center text-xl">→</span>
+                    <select id="exchange_to_currency" class="form-input flex-1" required>
+                        </select>
+                </div>
+                <button onclick="actExchangeCurrency()" 
+                        class="w-full p-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-bold transition duration-150">
+                    作為実行: 交換
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script type="module">
+        import { initApp, registerRenderCallback } from './core_logic.js';
+        // audit_acts.js からとしてグローバルスコープに関数を公開
+        import { 
+            actForcedHalt, actRestart, handleCreateAccountAct, 
+            actTransfer, actMintCurrency, actExchangeCurrency 
+        } from './audit_acts.js'; 
+
+        window.actForcedHalt = actForcedHalt;
+        window.actRestart = actRestart;
+        window.handleCreateAccountAct = handleCreateAccountAct;
+        window.actTransfer = actTransfer;
+        window.actMintCurrency = actMintCurrency;
+        window.actExchangeCurrency = actExchangeCurrency;
+
+        /**
+         * システムの状態に基づいて、全てのフォームのドロップダウンリストを動的に更新します。
+         * (core_logic.js のコールバックとして登録される)
+         * @param {object} state - 現在のシステム状態。
+         */
+        function renderAuditActsForm(state) {
+            const accountIds = state.accounts.map(acc => acc.id);
+            const currencyCodes = Object.keys(state.currency_rates); 
+
+            // 通貨ドロップダウンを更新する汎用関数
+            const updateCurrencySelect = (selectId) => {
+                const selectEl = document.getElementById(selectId);
+                if (!selectEl) return;
+                const options = currencyCodes.map(code => `<option value="${code}">${code}</option>`).join('');
+                selectEl.innerHTML = options;
+            };
+
+            // アカウントドロップダウンを更新する汎用関数
+            const updateAccountSelect = (selectId) => {
+                const selectEl = document.getElementById(selectId);
+                if (!selectEl) return;
+                
+                // プレースホルダーを再挿入
+                selectEl.innerHTML = '<option value="" disabled selected>アカウントIDを選択</option>';
+                
+                // アカウントIDオプションを追加
+                const options = accountIds.map(id => `<option value="${id}">${id}</option>`).join('');
+                selectEl.innerHTML += options;
+            };
+            
+            // --------------------------------------------------------
+            // A. アカウントID ドロップダウンの更新
+            // --------------------------------------------------------
+            updateAccountSelect('transfer_sender');
+            updateAccountSelect('transfer_recipient');
+            updateAccountSelect('mint_recipient');
+            updateAccountSelect('exchange_account_id');
+            
+            // --------------------------------------------------------
+            // B. 通貨 ドロップダウンの更新
+            // --------------------------------------------------------
+            updateCurrencySelect('transfer_currency');
+            updateCurrencySelect('mint_currency');
+            updateCurrencySelect('exchange_from_currency');
+            updateCurrencySelect('exchange_to_currency');
+        }
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initApp(); 
+            // フォームのUIレンダリング関数をコアロジックに登録
+            registerRenderCallback(renderAuditActsForm); 
+        });
+    </script>
+</body>
+</html>

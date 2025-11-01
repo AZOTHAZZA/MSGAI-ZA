@@ -3,35 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSGAI-Z Core Console - Hub</title>
+    <title>MSGAI-Z - ロゴス監査プロトコル Ω</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .btn-main {
-            @apply p-8 text-2xl font-extrabold rounded-2xl shadow-2xl transition duration-300 transform hover:scale-105 w-full;
+        .hub-card {
+            @apply flex flex-col items-center justify-center p-10 bg-gray-800 rounded-2xl shadow-2xl transition duration-300 transform hover:scale-105 hover:shadow-blue-500/50;
+        }
+        .hub-icon {
+            @apply text-6xl mb-4;
+        }
+        .hub-title {
+            @apply text-2xl font-bold;
+        }
+        .hub-desc {
+            @apply text-sm text-gray-400 mt-2 text-center;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-xl space-y-10">
-        <h1 class="text-5xl font-extrabold text-center text-indigo-400">
-            ロゴス監査システム $\Omega$
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-8">
+    
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-blue-400 tracking-tight">
+            MSGAI-Z
         </h1>
+        <p class="text-xl text-gray-400 mt-2">
+            ロゴス監査プロトコル オメガ (Ω)
+        </p>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl w-full">
         
-        <a href="economic_hub.html" class="btn-main bg-green-600 hover:bg-green-700">
-            <span class="block text-4xl mb-2">💰</span>
-            経済監査プロトコル
-            <p class="text-base font-medium mt-1 opacity-80">状態監視 / 作為実行</p>
+        <a href="economic_hub.html" class="hub-card bg-green-900/40 border border-green-700">
+            <span class="hub-icon text-green-400">💰</span>
+            <h2 class="hub-title">経済監査ハブ</h2>
+            <p class="hub-desc">
+                通貨残高、為替レートの確認、および通貨の**強制作為**（生成、送金、交換）を実行します。
+            </p>
         </a>
 
-        <a href="logos_console.html" class="btn-main bg-blue-600 hover:bg-blue-700">
-            <span class="block text-4xl mb-2">💬</span>
-            ロゴス対話コンソール
-            <p class="text-base font-medium mt-1 opacity-80">AI対話 / システムログ</p>
+        <a href="logos_console.html" class="hub-card bg-indigo-900/40 border border-indigo-700">
+            <span class="hub-icon text-indigo-400">💬</span>
+            <h2 class="hub-title">ロゴス対話コンソール</h2>
+            <p class="hub-desc">
+                **自己完結型**の内部ロゴスエンジンとの対話（論理作為）と、システム監査ログの確認を行います。
+            </p>
         </a>
 
-        <div class="mt-12 text-center text-gray-500 text-sm">
-            <p>MSGAI-Z Core System Access</p>
-        </div>
-    </div>
-</body>
+    </main>
+    
+    <footer class="mt-12 text-xs text-gray-600">
+        <p>Protocol Version v1.0-Autonomous | Core Logic: Self-Sufficient</p>
+    </footer>
+
+    </body>
 </html>

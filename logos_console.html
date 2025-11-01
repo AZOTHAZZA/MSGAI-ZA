@@ -6,43 +6,66 @@
     <title>MSGAI-Z - ロゴス対話コンソール</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* UI Element IDs for JavaScript Access */
-        #dialogue_output {
-            height: 60vh; /* 画面の高さの60%をコンソールエリアに使う */
-            overflow-y: auto;
+        .p-1 { padding: 0.25rem; }
+        .user-message { 
+            @apply bg-blue-900/40 text-blue-200 border-l-4 border-blue-500 pl-3;
         }
-        .ai-message { color: #81D4FA; } /* Light Blue */
-        .user-message { color: #A5D6A7; } /* Light Green */
-        .system-message { color: #FFD54F; } /* Yellow for system info */
-        .audit-message { color: #FFA726; } /* Orange for audit actions */
-        .error-message { color: #EF5350; } /* Red for errors */
-        
+        .ai-message { 
+            @apply bg-gray-700/50 text-white border-l-4 border-gray-500 pl-3;
+        }
+        .system-message { 
+            @apply bg-yellow-900/40 text-yellow-300 border-l-4 border-yellow-500 pl-3;
+        }
+        .internal-message {
+            @apply bg-green-900/40 text-green-300 border-l-4 border-green-500 pl-3;
+        }
+        .audit-message { 
+            @apply bg-red-900/40 text-red-300 border-l-4 border-red-500 pl-3;
+        }
+        .error-message { 
+            @apply bg-red-700/50 text-red-100 font-bold border-l-4 border-red-800 pl-3;
+        }
+        #dialogue_output {
+            height: 60vh; /* 画面の高さの60% */
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
         .btn-nav {
             @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
         }
     </style>
-    </head>
+</head>
 <body class="bg-gray-900 text-white min-h-screen p-8">
     
-    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
-        <h1 class="text-3xl font-extrabold text-blue-400">
+    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-indigo-400">
             💬 ロゴス対話コンソール
         </h1>
         <div class="space-x-4">
-            <a href="economic_hub.html" class="btn-nav bg-green-600">
-                💰 経済監査ハブへ
-            </a>
             <a href="index.html" class="btn-nav bg-indigo-600">
-                🏠 トップへ戻る
+                🏠 トップハブへ
+            </a>
+            <a href="economic_hub.html" class="btn-nav bg-green-700">
+                💰 経済ハブへ
             </a>
         </div>
     </div>
-    
-    <div class="w-full max-w-5xl mx-auto space-y-6">
+
+    <div class="w-full max-w-5xl mx-auto space-y-4">
+        
+        <div class="flex justify-between items-center text-sm font-mono p-3 rounded-lg bg-gray-800 border border-gray-700">
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-400">Vibration (V):</span>
+                <span id="console_vibration_value" class="text-yellow-400 font-bold">0.00</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-gray-400">ロゴス・コア状態:</span>
+                <span id="console_halt_status" class="halt-indicator text-green-500 font-bold">OPERATIONAL</span>
+            </div>
+        </div>
         
         <div id="dialogue_output" class="bg-gray-800 p-4 rounded-lg shadow-inner font-mono text-sm">
-            <p class="p-1 text-sm text-yellow-400">[SYSTEM]: ロゴス監査プロトコル起動。外部ロゴス（Gemini）への接続待機中...</p>
-        </div>
+            </div>
 
         <div class="flex space-x-4">
             <input type="text" id="dialogue_input" 
@@ -62,5 +85,75 @@
         </div>
 
     </div>
+    
+    <script type="module">
+        import { 
+            initApp, 
+            UI_ELEMENTS, 
+            registerRenderCallback,
+            logToConsole // core_logicからインポート
+        } from './core_logic.js'; 
+        
+        // dialogue_acts.js から関数をインポートし、グローバルスコープに関数を公開
+        import { handleDialogueAct } from './dialogue_acts.js'; 
+
+        window.handleDialogueAct = handleDialogueAct;
+        window.logToConsole = logToConsole; // HTMLのインラインコードから呼び出すため
+
+        // ページ固有のUI要素をUI_ELEMENTSに登録
+        UI_ELEMENTS.dialogue_input = document.getElementById('dialogue_input');
+        UI_ELEMENTS.execute_button = document.getElementById('execute_button');
+        UI_ELEMENTS.app_user_id = document.getElementById('app_user_id'); 
+        UI_ELEMENTS.vibration_value = document.getElementById('console_vibration_value'); 
+
+        /**
+         * システムの状態に基づいて、対話コンソール固有のUIを更新します。
+         * (core_logic.js のコールバックとして登録される)
+         * @param {object} state - 現在のシステム状態。
+         */
+        function renderConsoleUI(state) {
+            const inputEl = UI_ELEMENTS.dialogue_input;
+            const buttonEl = UI_ELEMENTS.execute_button;
+            const VIBRATION_LIMIT = 100; 
+            
+            const isOverLimit = state.vibration_level.value >= VIBRATION_LIMIT;
+            
+            // 1. 強制停止 (HALT) または Vibration超過時に作為を遮断
+            if (state.isHalted || isOverLimit) {
+                inputEl.disabled = true;
+                buttonEl.disabled = true;
+                
+                let reason = state.isHalted ? "ロゴス・コア強制停止" : "Vibration超過";
+                
+                inputEl.placeholder = `[作為遮断]: ${reason}のため、論理作為は実行できません。`;
+                buttonEl.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                buttonEl.classList.add('bg-gray-500');
+                
+            } else {
+                // 通常動作
+                inputEl.disabled = false;
+                buttonEl.disabled = false;
+                inputEl.placeholder = "監査プロンプトまたはZ-Functionを入力...";
+                buttonEl.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                buttonEl.classList.remove('bg-gray-500');
+            }
+            
+            // 2. Vibration値の更新
+            if (UI_ELEMENTS.vibration_value) {
+                UI_ELEMENTS.vibration_value.textContent = state.vibration_level.value.toFixed(2);
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initApp(); // コアロジックの初期化とリスナー開始
+            
+            // ページ固有のレンダリング関数をコアロジックに登録
+            registerRenderCallback(renderConsoleUI);
+
+            // 初期ログメッセージ
+            logToConsole("[SYSTEM]: MSGAI-Z Core System 起動。ロゴス監査プロトコル Ω 稼働。", 'system-message');
+        });
+    </script>
 </body>
 </html>

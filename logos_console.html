@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSGAI-Z - ロゴス対話コンソール</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* UI Element IDs for JavaScript Access */
+        #dialogue_output {
+            height: 60vh; /* 画面の高さの60%をコンソールエリアに使う */
+            overflow-y: auto;
+        }
+        .ai-message { color: #81D4FA; } /* Light Blue */
+        .user-message { color: #A5D6A7; } /* Light Green */
+        .system-message { color: #FFD54F; } /* Yellow for system info */
+        .audit-message { color: #FFA726; } /* Orange for audit actions */
+        .error-message { color: #EF5350; } /* Red for errors */
+        
+        .btn-nav {
+            @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
+        }
+    </style>
+    </head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    
+    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-blue-400">
+            💬 ロゴス対話コンソール
+        </h1>
+        <div class="space-x-4">
+            <a href="economic_hub.html" class="btn-nav bg-green-600">
+                💰 経済監査ハブへ
+            </a>
+            <a href="index.html" class="btn-nav bg-indigo-600">
+                🏠 トップへ戻る
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-5xl mx-auto space-y-6">
+        
+        <div id="dialogue_output" class="bg-gray-800 p-4 rounded-lg shadow-inner font-mono text-sm">
+            <p class="p-1 text-sm text-yellow-400">[SYSTEM]: ロゴス監査プロトコル起動。外部ロゴス（Gemini）への接続待機中...</p>
+        </div>
+
+        <div class="flex space-x-4">
+            <input type="text" id="dialogue_input" 
+                   class="flex-grow p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
+                   placeholder="監査プロンプトまたはZ-Functionを入力..." 
+                   onkeyup="if(event.key === 'Enter') handleDialogueAct()">
+            
+            <button id="execute_button" 
+                    onclick="handleDialogueAct()" 
+                    class="p-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition duration-150">
+                実行
+            </button>
+        </div>
+        
+        <div class="text-xs text-gray-500 text-right" id="app_user_id">
+            MSGAI-Z / User ID: Connecting...
+        </div>
+
+    </div>
+</body>
+</html>

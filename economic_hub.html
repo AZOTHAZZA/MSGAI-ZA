@@ -3,53 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSGAI-Z - 経済監査プロトコル</title>
+    <title>MSGAI-Z - 経済監査ハブ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .btn-func {
-            @apply p-6 text-xl font-bold rounded-xl shadow-lg transition duration-300 transform hover:scale-105 w-full;
+        .hub-card {
+            @apply flex flex-col items-center justify-center p-10 bg-gray-800 rounded-2xl shadow-2xl transition duration-300 transform hover:scale-105;
+        }
+        .hub-icon {
+            @apply text-6xl mb-4;
+        }
+        .hub-title {
+            @apply text-3xl font-bold;
+        }
+        .hub-desc {
+            @apply text-base text-gray-400 mt-2 text-center;
         }
         .btn-nav {
             @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen p-8">
+<body class="bg-gray-900 text-white min-h-screen p-8 flex flex-col items-center">
     
-    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
-        <h1 class="text-3xl font-extrabold text-green-400">
-            💰 経済監査プロトコル
+    <header class="w-full max-w-4xl flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-4xl font-extrabold text-green-400">
+            💰 経済監査ハブ
         </h1>
         <div class="space-x-4">
+            <a href="index.html" class="btn-nav bg-indigo-600">
+                🏠 トップハブへ
+            </a>
             <a href="logos_console.html" class="btn-nav bg-blue-600">
                 💬 AIコンソールへ
             </a>
-            <a href="index.html" class="btn-nav bg-indigo-600">
-                🏠 トップへ戻る
-            </a>
         </div>
-    </div>
-    
-    <div class="w-full max-w-4xl mx-auto space-y-8">
-        <p class="text-gray-400 text-lg">
-            MSGAI-Zシステムの経済状態を監視し、ロゴス監査に基づき強制作為を実行します。
-        </p>
+    </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            
-            <a href="state_view.html" class="btn-func bg-gray-700 hover:bg-gray-600 border border-green-500">
-                <span class="block text-4xl mb-2">📊</span>
-                システム状態ビュー
-                <p class="text-base font-normal mt-1 opacity-75">Vibrationレベル、残高、レートの確認</p>
-            </a>
+    <main class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl w-full mt-10">
+        
+        <a href="state_view.html" class="hub-card bg-blue-900/40 border border-blue-700 hover:shadow-blue-500/50">
+            <span class="hub-icon text-blue-400">📊</span>
+            <h2 class="hub-title">システム状態ビュー</h2>
+            <p class="hub-desc">
+                監査対象アカウントの**残高**、監査為替**レート**、および**Vibrationレベル**をリアルタイムで監視します。
+            </p>
+        </a>
 
-            <a href="audit_acts.html" class="btn-func bg-gray-700 hover:bg-gray-600 border border-red-500">
-                <span class="block text-4xl mb-2">⚙️</span>
-                強制作為実行
-                <p class="text-base font-normal mt-1 opacity-75">送金、通貨生成、交換の操作</p>
-            </a>
-            
-        </div>
-    </div>
+        <a href="audit_acts.html" class="hub-card bg-red-900/40 border border-red-700 hover:shadow-red-500/50">
+            <span class="hub-icon text-red-400">⚙️</span>
+            <h2 class="hub-title">強制作為実行</h2>
+            <p class="hub-desc">
+                ロゴス監査プロトコル内で、**経済作為**（送金、生成、交換）を強制的に実行するフォームです。
+            </p>
+        </a>
+
+    </main>
+
 </body>
 </html>

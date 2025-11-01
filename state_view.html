@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSGAI-Z - システム状態ビュー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-nav {
+            @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
+        }
+        .vibration-bar {
+            @apply h-full transition-all duration-500 ease-out;
+        }
+        .vibration-container {
+            @apply h-8 bg-gray-700 rounded-full overflow-hidden shadow-inner;
+        }
+        .table-header th {
+            @apply p-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    
+    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-blue-400">
+            📊 システム状態ビュー
+        </h1>
+        <div class="space-x-4">
+            <a href="economic_hub.html" class="btn-nav bg-green-700">
+                💰 経済ハブへ
+            </a>
+            <a href="logos_console.html" class="btn-nav bg-blue-600">
+                💬 AIコンソールへ
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-6xl mx-auto space-y-10">
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-yellow-500">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">ロゴス・コア状態</h2>
+            
+            <div class="space-y-4">
+                <div class="flex justify-between items-center pb-2 border-b border-gray-700">
+                    <span class="text-lg font-semibold">システム状態:</span>
+                    <span id="system_halt_status" class="halt-indicator text-green-500 font-bold">OPERATIONAL</span>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-semibold text-yellow-500">
+                            孫悟空の活動量 (Vibration)
+                        </span>
+                        <span id="vibration_value" class="text-2xl font-mono text-yellow-400">0.00</span>
+                    </div>
+                    
+                    <div class="vibration-container">
+                        <div id="vibration_meter" class="vibration-bar bg-yellow-500" style="width: 0%;">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 text-right">
+                        限界値: 100.00 (超過時、論理作為は遮断されます)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-indigo-500">
+                <h2 class="text-2xl font-bold mb-4 text-indigo-400">監査為替レート (ロゴスレート)</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="table-header">
+                            <tr>
+                                <th>通貨</th>
+                                <th>換算レート (ALPHA=1.0)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rates_body" class="divide-y divide-gray-800 font-mono text-sm">
+                            </tbody>
+                    </table>
+                    <p class="text-xs text-gray-500 mt-4">
+                        NOTE: レートはロゴス監査プロトコル内部の論理に基づいて決定されます。
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-gray-500">
+                <h2 class="text-2xl font-bold mb-4 text-gray-400">プロトコル情報</h2>
+                <div class="space-y-2 text-sm">
+                    <p><strong>プロトコル名:</strong> MSGAI-Z ロゴス監査プロトコル Ω</p>
+                    <p><strong>バージョン:</strong> v1.0-Autonomous</p>
+                    <p><strong>コア制御:</strong> `core_logic.js` (自己完結型)</p>
+                    <p><strong>知識ベース:</strong> `knowledge_base.js`</p>
+                    <p id="app_user_id" class="text-gray-500">User ID: Connecting...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+            <h2 class="text-2xl font-bold mb-4 text-green-400">アカウント残高一覧</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="w-1/6">アカウントID</th>
+                            <th class="w-1/6">名前</th>
+                            <th class="w-1/4 text-right">ALPHA</th>
+                            <th class="w-1/4 text-right">BETA</th>
+                            <th class="w-1/4 text-right">GAMMA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accounts_body" class="divide-y divide-gray-800 text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script type="module">
+        import { 
+            initApp, 
+            UI_ELEMENTS, 
+            registerRenderCallback,
+            logToConsole 
+        } from './core_logic.js'; 
+
+        // ページ固有のUI要素をUI_ELEMENTSに登録
+        UI_ELEMENTS.vibration_meter = document.getElementById('vibration_meter');
+        UI_ELEMENTS.vibration_value = document.getElementById('vibration_value');
+        UI_ELEMENTS.app_user_id = document.getElementById('app_user_id'); 
+        
+        /**
+         * システム状態に基づいて、アカウント残高テーブルと為替レートテーブルを動的に更新します。
+         * (core_logic.js のコールバックとして登録される)
+         * @param {object} state - 現在のシステム状態。
+         */
+        function renderStateView(state) {
+            const ratesBody = document.getElementById('rates_body');
+            const accountsBody = document.getElementById('accounts_body');
+
+            if (!ratesBody || !accountsBody) return;
+
+            // 1. 為替レートテーブルの動的更新
+            ratesBody.innerHTML = '';
+            // NOTE: ALPHAは基準(1.0)として必ず表示
+            const baseRateRow = document.createElement('tr');
+            baseRateRow.className = 'border-b border-gray-700';
+            baseRateRow.innerHTML = `<td class="py-2">ALPHA</td><td class="py-2">1.0000</td>`;
+            ratesBody.appendChild(baseRateRow);
+
+            for (const currency in state.currency_rates) {
+                if (currency !== 'ALPHA') {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-gray-700 last:border-b-0';
+                    tr.innerHTML = `<td class="py-2">${currency}</td><td class="py-2">${state.currency_rates[currency].toFixed(4)}</td>`;
+                    ratesBody.appendChild(tr);
+                }
+            }
+
+            // 2. アカウントテーブルの動的更新
+            accountsBody.innerHTML = '';
+            state.accounts.forEach(acc => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50';
+                tr.innerHTML = `
+                    <td class="py-2 px-1 font-mono">${acc.id}</td>
+                    <td class="py-2 px-1">${acc.name}</td>
+                    <td class="py-2 px-1 text-right font-mono text-green-300">${(acc.ALPHA || 0).toFixed(2)}</td>
+                    <td class="py-2 px-1 text-right font-mono text-green-300">${(acc.BETA || 0).toFixed(2)}</td>
+                    <td class="py-2 px-1 text-right font-mono text-green-300">${(acc.GAMMA || 0).toFixed(2)}</td>
+                `;
+                accountsBody.appendChild(tr);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initApp(); // core_logicの初期化とリスナー開始
+            
+            // ページ固有のレンダリング関数をコアロジックに登録
+            registerRenderCallback(renderStateView);
+        });
+    </script>
+</body>
+</html>

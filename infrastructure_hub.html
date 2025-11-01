@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSGAI-Z - インフラストラクチャ・ハブ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-nav {
+            @apply p-3 text-sm font-semibold rounded-lg transition duration-200 hover:opacity-80;
+        }
+        .indicator {
+            @apply p-3 rounded-lg font-bold text-center;
+        }
+        .gauge-bar {
+            @apply h-4 rounded-full transition-all duration-500;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    
+    <div class="flex justify-between items-center mb-10 border-b border-gray-700 pb-4">
+        <h1 class="text-3xl font-extrabold text-teal-400">
+            ⚡ インフラストラクチャ・ハブ (物理基盤の創世)
+        </h1>
+        <div class="space-x-4">
+             <a href="index.html" class="btn-nav bg-indigo-600">
+                🏠 トップハブへ
+            </a>
+            <a href="economic_hub.html" class="btn-nav bg-green-700">
+                💰 経済ハブへ
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-5xl mx-auto space-y-8">
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-300">LOGOS-ENERGY (電力供給論理)</h2>
+            <div class="flex items-center space-x-4 mb-4">
+                <span class="text-gray-400 w-32">供給レベル:</span>
+                <div class="flex-grow bg-gray-600 rounded-full">
+                    <div id="energy_supply_bar" class="gauge-bar bg-yellow-500" style="width: 50%;"></div>
+                </div>
+                <span id="energy_supply_value" class="w-20 text-right font-mono">50%</span>
+            </div>
+            
+            <div class="flex space-x-4">
+                <input type="number" id="energy_act_amount" min="0" max="100" step="1" placeholder="論理的供給量 (%)"
+                       class="flex-grow p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-yellow-500">
+                <button onclick="actAdjustSupply('ENERGY')" 
+                        class="p-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-bold transition duration-150">
+                    供給量作為を実行
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-300">LOGOS-NET (通信安定性論理)</h2>
+            <div class="flex items-center space-x-4 mb-4">
+                <span class="text-gray-400 w-32">安定性指数:</span>
+                <div class="flex-grow bg-gray-600 rounded-full">
+                    <div id="net_stability_bar" class="gauge-bar bg-cyan-500" style="width: 75%;"></div>
+                </div>
+                <span id="net_stability_value" class="w-20 text-right font-mono">75%</span>
+            </div>
+            
+            <div class="flex space-x-4">
+                <input type="number" id="net_act_amount" min="0" max="100" step="1" placeholder="論理的安定性 (%)"
+                       class="flex-grow p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-cyan-500">
+                <button onclick="actAdjustSupply('NET')" 
+                        class="p-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg font-bold transition duration-150">
+                    安定性作為を実行
+                </button>
+            </div>
+        </div>
+
+    </div>
+    
+    <script type="module">
+        import { initApp, UI_ELEMENTS, registerRenderCallback, logToConsole, saveSystemState, addVibration, getCurrentState } from './core_logic.js'; 
+        import { actAdjustSupply } from './infra_acts.js'; // ★ 新しいインフラ作為モジュールをインポート
+
+        window.actAdjustSupply = actAdjustSupply;
+
+        // ページ固有のUI要素をUI_ELEMENTSに登録
+        UI_ELEMENTS.energy_supply_value = document.getElementById('energy_supply_value');
+        UI_ELEMENTS.energy_supply_bar = document.getElementById('energy_supply_bar');
+        UI_ELEMENTS.net_stability_value = document.getElementById('net_stability_value');
+        UI_ELEMENTS.net_stability_bar = document.getElementById('net_stability_bar');
+        
+        /**
+         * システムの状態に基づいて、インフラハブ固有のUIを更新します。
+         * @param {object} state - 現在のシステム状態。
+         */
+        function renderInfrastructureUI(state) {
+            const energyLevel = state.infrastructure.energy_supply.value;
+            const netLevel = state.infrastructure.net_stability.value;
+            
+            if (UI_ELEMENTS.energy_supply_value) {
+                UI_ELEMENTS.energy_supply_value.textContent = `${energyLevel.toFixed(1)}%`;
+                UI_ELEMENTS.energy_supply_bar.style.width = `${energyLevel}%`;
+                UI_ELEMENTS.energy_supply_bar.classList.toggle('bg-red-500', energyLevel < 20);
+                UI_ELEMENTS.energy_supply_bar.classList.toggle('bg-yellow-500', energyLevel >= 20 && energyLevel < 80);
+                UI_ELEMENTS.energy_supply_bar.classList.toggle('bg-green-500', energyLevel >= 80);
+            }
+             if (UI_ELEMENTS.net_stability_value) {
+                UI_ELEMENTS.net_stability_value.textContent = `${netLevel.toFixed(1)}%`;
+                UI_ELEMENTS.net_stability_bar.style.width = `${netLevel}%`;
+                UI_ELEMENTS.net_stability_bar.classList.toggle('bg-red-500', netLevel < 20);
+                UI_ELEMENTS.net_stability_bar.classList.toggle('bg-cyan-500', netLevel >= 20);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initApp(); 
+            registerRenderCallback(renderInfrastructureUI);
+            logToConsole("[SYSTEM]: インフラストラクチャ・ハブ稼働。物理基盤の論理を監視中。", 'system-message');
+        });
+    </script>
+</body>
+</html>
